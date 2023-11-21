@@ -11,9 +11,15 @@ pip <- "https://api.worldbank.org/pip/v1/pip?"
 
 #Return year of most recent available poverty data from PIP 
 pip_call <- paste0(pip, "fill_gaps=true")
-pip_response <- suppressWarnings(rbindlist(content(GET(pip_call))))
+pip_response_fill <- suppressWarnings(rbindlist(content(GET(pip_call))))
 
-pip_most_recent <- pip_response[, .(reporting_year = max(reporting_year)), by = .(country_code, reporting_level)]
+pip_call <- paste0(pip, "fill_gaps=false")
+pip_response_nofill <- suppressWarnings(rbindlist(content(GET(pip_call))))
+pip_response_nofill <- pip_response_nofill[!(paste0(country_code, reporting_level, reporting_year) %in% pip_response_fill[, paste0(country_code, reporting_level, reporting_year)])]
+
+pip_response <- rbind(pip_response_fill[, fill := "true"], pip_response_nofill[, fill := "false"])
+
+pip_most_recent <- pip_response[, .SD[which.max(reporting_year), .(reporting_year, fill)], by = .(country_code, reporting_level)]
 
 #Get HHFCE growth per capita rates from World Bank
 hhfce_call <- "https://api.worldbank.org/v2/country/all/indicator/NE.CON.PRVT.PC.KD.ZG?per_page=30000&format=json"
@@ -71,13 +77,13 @@ growth_rates[is.na(growth_rates)] <- 1
 growth_rates[, growth_index := cumprod(growth_rate), by = country_code]
 
 #Establish poverty line years to project
-poverty_lines <- pip_most_recent[rep(seq_len(.N), max(as.numeric(growth_rates$year))-reporting_year+1)][, year := as.character(reporting_year + seq_len(.N)-1), by = .(country_code, reporting_level)]
+poverty_lines <- pip_most_recent[rep(seq_len(.N), max(as.numeric(growth_rates$year))-reporting_year+1)][, year := as.character(reporting_year + seq_len(.N)-1), by = .(country_code, reporting_level, fill)]
 
 #Calculate effective poverty lines
 poverty_lines <- merge(poverty_lines, growth_rates, by = c("country_code", "year"), all.x = T)
 poverty_lines[, poverty_line := (growth_index/growth_index[which.min(year)]), by = .(country_code, reporting_level)]
 
 #Join effective lines with existing PIP line data
-poverty_lines <- unique(rbind(pip_response[, .(country_code, reporting_level, year = reporting_year, reporting_year, poverty_line = 1)], poverty_lines[, .(country_code, reporting_level, year, reporting_year, poverty_line)])[order(country_code, reporting_level, year)])
+poverty_lines <- unique(rbind(pip_response[, .(country_code, reporting_level, year = reporting_year, reporting_year, poverty_line = 1, fill)], poverty_lines[, .(country_code, reporting_level, year, reporting_year, poverty_line, fill)])[order(country_code, reporting_level, year)])
 
 fwrite(poverty_lines, "project_data/effective_ipls.csv")

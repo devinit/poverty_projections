@@ -8,6 +8,7 @@ setwd(dirname(dirname(getActiveDocumentContext()$path)))
 
 #Choose a poverty line
 poverty_line <- 2.15
+first_year <- 1981
 
 ##
 ##### Start of API querying ######\
@@ -18,6 +19,9 @@ pip <- "https://api.worldbank.org/pip/v1/pip?"
 #Read in effective extreme poverty lines
 ipls <- fread("project_data/effective_ipls.csv")
 ipls <- ipls[is.na(poverty_line), poverty_line := 1]
+
+#Select only national IPLs where they exist for the year-country combination
+ipls <- ipls[, .SD[reporting_level == "national" | !any(reporting_level == "national")], by = .(country_code, year)]
 
 #Get current PIP data at the IPL
 pip_call <- paste0(pip, "country=all&fill_gaps=true&pov_line=", poverty_line)
@@ -32,7 +36,7 @@ if(length(list.files("project_data", pattern = "^projected_expoverty[.]csv$")) =
 }
 
 #List the ipls which are outstanding to do based on the read output file and current PIP data
-ipls_todo <- ipls[!(paste0(country_code, reporting_level, year) %in% ipl_out[, paste0(country_code, reporting_level, year)])]
+ipls_todo <- ipls[!(paste0(country_code, reporting_level, year) %in% ipl_out[, paste0(country_code, reporting_level, year)]) & year >= first_year]
 ipls_todo <- unique(ipls_todo[!(paste0(country_code, reporting_level, year)) %in% pip_current[, paste0(country_code, reporting_level, year)]])
 
 #Iterate through the outstanding ipls
@@ -45,6 +49,7 @@ for(i in 1:nrow(ipls_todo)){
   rep_lvl <- "all"
   reporting_year <- ipl_r$reporting_year
   pov_line <- round(ipl_r$poverty_line, 3)
+  fill <- ipl_r$fill
   
   #Message country code and year to console to indicate progress
   message(cc, ipl_r$year)
@@ -57,7 +62,7 @@ for(i in 1:nrow(ipls_todo)){
   }
   
   #Create the API call address based on parameters
-  pip_call <- paste0(pip, "country=", cc, "&year=", reporting_year, "&povline=", pov_line, "&reporting_level=", rep_lvl, "&fill_gaps=true")
+  pip_call <- paste0(pip, "country=", cc, "&year=", reporting_year, "&povline=", pov_line, "&reporting_level=", rep_lvl, "&fill_gaps=", fill)
   
   #Check whether the call is valid
   if(status_code(GET(pip_call)) != 404){
@@ -88,9 +93,6 @@ extreme_pov <- unique(rbind(pip_current, ipl_out))
 
 extreme_pov[, year := as.integer(year)]
 extreme_pov <- extreme_pov[order(country_code, reporting_level, year)]
-
-#Remove sub-national figures for China, Indonesia, and India to avoid double counting
-extreme_pov <- extreme_pov[!((country_code %in% c("CHN", "IDN", "IND")) & reporting_level != "national")]
 
 #Read WUP population function from remote repo
 source("https://raw.githubusercontent.com/devinit/gha_automation/main/general/wupData.R")
