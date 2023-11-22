@@ -6,12 +6,12 @@ lapply(required.packages, require, character.only=T)
 #Set working directory as local folder
 setwd(dirname(dirname(getActiveDocumentContext()$path)))
 
-#Choose a poverty line
-poverty_line <- 2.15
+#Choose a poverty line and starting year of analysis (pre-1981 data is incomplete)
+chosen_poverty_line <- 2.15
 first_year <- 1981
 
 ##
-##### Start of API querying ######\
+##### Start of API querying ######
 
 #Set up API base address
 pip <- "https://api.worldbank.org/pip/v1/pip?"
@@ -23,10 +23,16 @@ ipls <- ipls[is.na(poverty_line), poverty_line := 1]
 #Select only national IPLs where they exist for the year-country combination
 ipls <- ipls[, .SD[reporting_level == "national" | !any(reporting_level == "national")], by = .(country_code, year)]
 
+#Set IPLs to chosen poverty line
+ipls[, poverty_line := poverty_line * chosen_poverty_line]
+
 #Get current PIP data at the IPL
-pip_call <- paste0(pip, "country=all&fill_gaps=true&pov_line=", poverty_line)
+pip_call <- paste0(pip, "country=all&fill_gaps=true&pov_line=", chosen_poverty_line)
 pip_current <- suppressWarnings(rbindlist(content(GET(pip_call))))
+pip_current <- pip_current[reporting_year >= first_year]
 pip_current[, year := reporting_year]
+pip_current <- pip_current[, .SD[reporting_level == "national" | !any(reporting_level == "national")], by = .(country_code, year)]
+
 
 #Either read or create the output file
 if(length(list.files("project_data", pattern = "^projected_expoverty[.]csv$")) == 1){
@@ -35,7 +41,7 @@ if(length(list.files("project_data", pattern = "^projected_expoverty[.]csv$")) =
   ipl_out <- data.table(country_code = character(), year = integer())
 }
 
-#List the ipls which are outstanding to do based on the read output file and current PIP data
+#List the IPLs which are outstanding to do based on the read output file and current PIP data
 ipls_todo <- ipls[!(paste0(country_code, reporting_level, year) %in% ipl_out[, paste0(country_code, reporting_level, year)]) & year >= first_year]
 ipls_todo <- unique(ipls_todo[!(paste0(country_code, reporting_level, year)) %in% pip_current[, paste0(country_code, reporting_level, year)]])
 
@@ -46,20 +52,13 @@ for(i in 1:nrow(ipls_todo)){
   #Read parameters for the API call from the list of ipls
   ipl_r <- ipls_todo[i]
   cc <- ipl_r$country_code
-  rep_lvl <- "all"
+  rep_lvl <- ipl_r$reporting_level
   reporting_year <- ipl_r$reporting_year
   pov_line <- round(ipl_r$poverty_line, 3)
   fill <- ipl_r$fill
   
   #Message country code and year to console to indicate progress
   message(cc, ipl_r$year)
-  
-  #Select subnational data when required
-  if(nchar(cc) > 3){
-    
-    rep_lvl <- ifelse(substr(cc, 5, 5) == "R", "rural", "urban")
-    cc <- substr(cc, 0, 3)
-  }
   
   #Create the API call address based on parameters
   pip_call <- paste0(pip, "country=", cc, "&year=", reporting_year, "&povline=", pov_line, "&reporting_level=", rep_lvl, "&fill_gaps=", fill)

@@ -81,7 +81,7 @@ poverty_lines <- pip_most_recent[rep(seq_len(.N), max(as.numeric(growth_rates$ye
 
 #Calculate effective poverty lines
 poverty_lines <- merge(poverty_lines, growth_rates, by = c("country_code", "year"), all.x = T)
-poverty_lines[, poverty_line := (growth_index/growth_index[which.min(year)]), by = .(country_code, reporting_level)]
+poverty_lines[, poverty_line := (growth_index[which.min(year)]/growth_index), by = .(country_code, reporting_level)]
 
 #Join effective lines with existing PIP line data
 poverty_lines <- unique(rbind(pip_response[, .(country_code, reporting_level, year = reporting_year, reporting_year, poverty_line = 1, fill)], poverty_lines[, .(country_code, reporting_level, year, reporting_year, poverty_line, fill)])[order(country_code, reporting_level, year)])
