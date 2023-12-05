@@ -7,7 +7,7 @@ lapply(required.packages, require, character.only=T)
 setwd(dirname(dirname(getActiveDocumentContext()$path)))
 
 #Choose a poverty line and starting year of analysis (pre-1981 data is incomplete)
-chosen_poverty_line <- 2.15
+chosen_poverty_line <- 3.65
 first_year <- 1981
 
 ##
@@ -27,16 +27,15 @@ ipls <- ipls[, .SD[reporting_level == "national" | !any(reporting_level == "nati
 ipls[, poverty_line := poverty_line * chosen_poverty_line]
 
 #Get current PIP data at the IPL
-pip_call <- paste0(pip, "country=all&fill_gaps=true&pov_line=", chosen_poverty_line)
+pip_call <- paste0(pip, "country=all&fill_gaps=true&povline=", chosen_poverty_line)
 pip_current <- suppressWarnings(rbindlist(content(GET(pip_call))))
 pip_current <- pip_current[reporting_year >= first_year]
 pip_current[, year := reporting_year]
 pip_current <- pip_current[, .SD[reporting_level == "national" | !any(reporting_level == "national")], by = .(country_code, year)]
 
-
 #Either read or create the output file
-if(length(list.files("project_data", pattern = "^projected_expoverty[.]csv$")) == 1){
-  ipl_out <- fread("project_data/projected_expoverty.csv")
+if(length(list.files("project_data", pattern = paste0("^projected_", chosen_poverty_line, "_poverty[.]csv$"))) == 1){
+  ipl_out <- fread(paste0("project_data/projected_", chosen_poverty_line, "_poverty.csv"))
 } else {
   ipl_out <- data.table(country_code = character(), year = integer())
 }
@@ -46,39 +45,43 @@ ipls_todo <- ipls[!(paste0(country_code, reporting_level, year) %in% ipl_out[, p
 ipls_todo <- unique(ipls_todo[!(paste0(country_code, reporting_level, year)) %in% pip_current[, paste0(country_code, reporting_level, year)]])
 
 #Iterate through the outstanding ipls
-for(i in 1:nrow(ipls_todo)){
-  if(exists("ipl_response")) rm(ipl_response)
-  
-  #Read parameters for the API call from the list of ipls
-  ipl_r <- ipls_todo[i]
-  cc <- ipl_r$country_code
-  rep_lvl <- ipl_r$reporting_level
-  reporting_year <- ipl_r$reporting_year
-  pov_line <- round(ipl_r$poverty_line, 3)
-  fill <- ipl_r$fill
-  
-  #Message country code and year to console to indicate progress
-  message(cc, ipl_r$year)
-  
-  #Create the API call address based on parameters
-  pip_call <- paste0(pip, "country=", cc, "&year=", reporting_year, "&povline=", pov_line, "&reporting_level=", rep_lvl, "&fill_gaps=", fill)
-  
-  #Check whether the call is valid
-  if(status_code(GET(pip_call)) != 404){
+if(nrow(ipls_todo) > 0){
+  for(i in 1:nrow(ipls_todo)){
+    if(exists("ipl_response")) rm(ipl_response)
     
-    #If valid, read the data from it
-    ipl_response <- suppressWarnings(rbindlist(content(GET(pip_call))))
-  } else {
+    #Read parameters for the API call from the list of ipls
+    ipl_r <- ipls_todo[i]
+    cc <- ipl_r$country_code
+    rep_lvl <- ipl_r$reporting_level
+    reporting_year <- ipl_r$reporting_year
+    pov_line <- round(ipl_r$poverty_line, 3)
+    fill <- ipl_r$fill
     
-    ipl_response <- data.table()
+    #Message country code and year to console to indicate progress
+    message(cc, ipl_r$year)
+    
+    #Create the API call address based on parameters
+    pip_call <- paste0(pip, "country=", cc, "&year=", reporting_year, "&povline=", pov_line, "&reporting_level=", rep_lvl, "&fill_gaps=", fill)
+    
+    pip_response <- RETRY("GET", pip_call)
+    
+    #Check whether the call is valid
+    if(status_code(pip_response) != 404){
+      
+      #If valid, read the data from it
+      ipl_response <- suppressWarnings(rbindlist(content(pip_response)))
+    } else {
+      
+      ipl_response <- data.table()
+    }
+    
+    #Fill in the effective year and original country code to the outputted data
+    ipl_response$year <- ipl_r$year
+  
+    #Append the outputted data to the output table and write it to the local folder
+    ipl_out <- rbind(ipl_out, ipl_response, fill = T)
+    fwrite(ipl_out, paste0("project_data/projected_", chosen_poverty_line, "_poverty.csv"))
   }
-  
-  #Fill in the effective year and original country code to the outputted data
-  ipl_response$year <- ipl_r$year
-
-  #Append the outputted data to the output table and write it to the local folder
-  ipl_out <- rbind(ipl_out, ipl_response, fill = T)
-  fwrite(ipl_out, "project_data/projected_expoverty.csv")
 }
 
 ##### End of API querying #####
@@ -107,7 +110,7 @@ pip_call <- paste0(pip, "country=all&year=2019&fill_gaps=true")
 pip_response <- data.table(fromJSON(pip_call))
 
 missing_pip_countries <- pip_response[!(country_code %in% extreme_pov$country_code), .(country_name, country_code, region_name, region_code, estimation_type = "regional")]
-regional_headcounts <- extreme_pov[, .(headcount = sum(poor)/sum(population)), by = .(year, region_name)]
+regional_headcounts <- extreme_pov[!is.na(poor), .(headcount = sum(poor)/sum(population)), by = .(year, region_name)]
 
 wb_call <- "https://api.worldbank.org/v2/country?per_page=500&format=json"
 wb_response <- data.table(fromJSON(wb_call)[[2]])
@@ -124,11 +127,11 @@ extreme_pov <- rbind(extreme_pov, missing_wb_countries, fill = T)[order(year, co
 
 #Total by year
 extreme_poverty_global <- extreme_pov[!is.na(poor), .(poor = sum(poor), population = sum(population)), by = year][, effective_headcount := poor/population][]
-fwrite(extreme_poverty_global, "output/projected_expoverty_global.csv")
+fwrite(extreme_poverty_global, paste0("output/projected_", chosen_poverty_line, "_poverty_global.csv"))
 
 #Total by country
 extreme_poverty_cc <- extreme_pov[!is.na(poor),  .(poor = sum(poor), population = sum(population)), by = .(country_code, year)][, effective_headcount := poor/population][]
-fwrite(extreme_poverty_cc, "output/projected_expoor_country.csv")
+fwrite(extreme_poverty_cc, paste0("output/projected_", chosen_poverty_line, "_poverty_country.csv"))
 
 ##### End of analysis #####
 ##
