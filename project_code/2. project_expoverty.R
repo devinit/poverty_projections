@@ -7,7 +7,7 @@ lapply(required.packages, require, character.only=T)
 setwd(dirname(dirname(getActiveDocumentContext()$path)))
 
 #Choose a poverty line and starting year of analysis (pre-1981 data is incomplete)
-chosen_poverty_line <- 3.65
+chosen_poverty_line <- 2.15
 first_year <- 1981
 
 ##
