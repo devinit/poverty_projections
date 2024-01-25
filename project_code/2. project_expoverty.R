@@ -49,7 +49,9 @@ ipls_todo <- unique(ipls_todo[!(paste0(country_code, reporting_level, year)) %in
 
 #Iterate through the outstanding ipls
 if(nrow(ipls_todo) > 0){
+  pb = txtProgressBar(max=nrow(ipls_todo), style=3)
   for(i in 1:nrow(ipls_todo)){
+    setTxtProgressBar(pb, i)
     if(exists("ipl_response")) rm(ipl_response)
     
     #Read parameters for the API call from the list of ipls
@@ -61,7 +63,7 @@ if(nrow(ipls_todo) > 0){
     fill <- ipl_r$fill
     
     #Message country code and year to console to indicate progress
-    message(cc, ipl_r$year)
+    # message(cc, ipl_r$year)
     
     #Create the API call address based on parameters
     pip_call <- paste0(pip, "country=", cc, "&year=", reporting_year, "&povline=", pov_line, "&reporting_level=", rep_lvl, "&fill_gaps=", fill)
@@ -85,6 +87,7 @@ if(nrow(ipls_todo) > 0){
     ipl_out <- rbind(ipl_out, ipl_response, fill = T)
     fwrite(ipl_out, paste0("project_data/projected_", chosen_poverty_line, "_poverty.csv"))
   }
+  close(pb)
 }
 
 ##### End of API querying #####
