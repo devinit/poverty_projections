@@ -64,6 +64,7 @@ unlink(temp_file) # Remove the temporary file
 
 data_cols <- c("ISO", "WEO Subject Code", grep("^\\d{4}$", names(weo), value = T))
 weo <- melt(weo[, ..data_cols], id.vars = c("ISO", "WEO Subject Code"), variable.factor = F) #filters for columns specified in previous line
+weo = data.table(weo)
 weo[, value := as.numeric(gsub(",", "", value))]
 weo[ISO == "WBG", ISO := "PSE"]
 
@@ -85,7 +86,7 @@ growth_rates[is.na(growth_rates)] <- 1 #puts all missing growth rates to 1 (no c
 growth_rates[, growth_index := cumprod(growth_rate), by = country_code] #creates new column with cumulative growth for all previous years
 
 #Establish poverty line years to project
-poverty_lines <- pip_most_recent[rep(seq_len(.N), max(as.numeric(growth_rates$year))-reporting_year+1)][, year := as.character(reporting_year + seq_len(.N)-1), by = .(country_code, reporting_level, fill)]
+poverty_lines <- pip_most_recent[rep(seq_len(.N), max(as.numeric(as.character(growth_rates$year)))-reporting_year+1)][, year := as.character(reporting_year + seq_len(.N)-1), by = .(country_code, reporting_level, fill)]
 
 #Calculate effective poverty lines
 poverty_lines <- merge(poverty_lines, growth_rates, by = c("country_code", "year"), all.x = T)
