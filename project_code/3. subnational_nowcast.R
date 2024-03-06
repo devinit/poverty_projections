@@ -10,6 +10,20 @@ setwd(dirname(dirname(getActiveDocumentContext()$path)))
 subnat = read.xlsx("project_data/global-subnational-poverty-gsap-2019-data.xlsx")
 names(subnat)[6] = "welfaretype_code" # Account for duplicate col name
 
+# Fix corrupted IDs
+subnat$geo_code2_new[
+  which(subnat$geo_code2_new=="CPV_2022_GADM1_20" & subnat$sample=="9-Brava")
+] = "CPV_2022_GADM1_20_BRAVA"
+subnat$geo_code2_new[
+  which(subnat$geo_code2_new=="CPV_2022_GADM1_20" & subnat$sample!="9-Brava")
+] = "CPV_2022_GADM1_20_VICENTE"
+subnat$geo_code2_new[
+  which(subnat$geo_code2_new=="MLI_2015_" & subnat$sample=="11 - Menaka")
+] = "MLI_2015_ADM1_MENAKA"
+subnat$geo_code2_new[
+  which(subnat$geo_code2_new=="MLI_2015_" & subnat$sample!="11 - Menaka")
+] = "MLI_2015_ADM1_TAO"
+
 # Load imputed extreme poverty
 extreme_poverty_cc = fread("output/projected_2.15_poverty_country.csv")
 extreme_poverty_cc = unique(extreme_poverty_cc) # Remove PHL
