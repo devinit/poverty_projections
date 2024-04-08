@@ -7,7 +7,7 @@ lapply(required.packages, require, character.only=T)
 setwd(dirname(dirname(getActiveDocumentContext()$path)))
 
 #Choose a poverty line and starting year of analysis (pre-1981 data is incomplete)
-chosen_poverty_line <- 6.85
+chosen_poverty_line <- 2.15
 first_year <- 1981
 
 ##### Start of API querying ######
@@ -125,7 +125,18 @@ pip_call <- paste0(pip, "country=all&year=2022&fill_gaps=true")
 pip_response <- data.table(fromJSON(pip_call))
 
 missing_pip_countries <- pip_response[!(country_code %in% extreme_pov$country_code), .(country_name, country_code, region_name, region_code, estimation_type = "regional")] #check for any missing countries
-regional_headcounts <- extreme_pov[!is.na(poor), .(headcount = sum(poor)/sum(population)), by = .(year, region_name)] #calculates regional averages per year
+# regional_headcounts <- extreme_pov[!is.na(poor), .(headcount = sum(poor)/sum(population)), by = .(year, region_name)] #calculates regional averages per year
+regional_headcounts = fromJSON(
+  paste0(
+    "https://api.worldbank.org/pip/v1/pip-grp?country=all&year=all&povline=",chosen_poverty_line,"&group_by=wb&additional_ind=false&ppp_version=2017"
+  )
+)
+regional_headcounts = regional_headcounts[,c("reporting_year", "region_name", "headcount", "reporting_pop", "pop_in_poverty")]
+setnames(
+  regional_headcounts,
+  c("reporting_year", "reporting_pop", "pop_in_poverty"),
+  c("year", "population", "poor")
+)
 
 wb_call <- "https://api.worldbank.org/v2/country?per_page=500&format=json" #World bank general country info (isos, region names, etc)
 wb_response <- data.table(fromJSON(wb_call)[[2]])
@@ -134,9 +145,9 @@ missing_wb_countries <- wb_response[region.id != "NA" & !(id %in% extreme_pov$co
 missing_wb_countries[income == "High income", region_name := "Other High Income Countries"][, income := NULL] #checks for countries in WB list not in extreme_pov and sets HIC with no data as Other High Income Countries
 
 missing_wb_countries <- merge(missing_wb_countries, regional_headcounts, by = c("region_name"), all.x = T, allow.cartesian = T) #merges the missing countries with their regional poverty levels
-missing_wb_countries <- merge(missing_wb_countries, wupPop[area == "national", .(country_code = ISO3, year = as.integer(year), population)], all.x = T, by = c("country_code", "year")) #adds in population data
+# missing_wb_countries <- merge(missing_wb_countries, wupPop[area == "national", .(country_code = ISO3, year = as.integer(year), population)], all.x = T, by = c("country_code", "year")) #adds in population data
 
-missing_wb_countries[, poor := headcount * population] #calculates number of people in poverty
+# missing_wb_countries[, poor := headcount * population] #calculates number of people in poverty
 
 extreme_pov <- rbind(extreme_pov, missing_wb_countries, fill = T)[order(year, country_code)] #merges the projected country data with missing countries with regional averages
 
