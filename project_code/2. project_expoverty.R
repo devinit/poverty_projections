@@ -111,7 +111,7 @@ extreme_pov <- merge(extreme_pov, wupPop[, .(country_code = ISO3, reporting_leve
 extreme_pov[, poor := headcount * population] #calculates number of people in poverty
 
 #Fill gaps with regional estimates
-pip_call <- paste0(pip, "country=all&year=2019&fill_gaps=true")
+pip_call <- paste0(pip, "country=all&year=2022&fill_gaps=true")
 pip_response <- data.table(fromJSON(pip_call))
 
 missing_pip_countries <- pip_response[!(country_code %in% extreme_pov$country_code), .(country_name, country_code, region_name, region_code, estimation_type = "regional")] #check for any missing countries
