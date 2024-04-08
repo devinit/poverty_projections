@@ -15,7 +15,8 @@ pip_response_fill <- suppressWarnings(rbindlist(content(GET(pip_call)))) #datase
 
 pip_call <- paste0(pip, "fill_gaps=false")
 pip_response_nofill <- suppressWarnings(rbindlist(content(GET(pip_call)))) #dataset of years for when survey was conducted
-pip_response_nofill <- pip_response_nofill[!(paste0(country_code, reporting_level, reporting_year) %in% pip_response_fill[, paste0(country_code, reporting_level, reporting_year)])] #removes duplicates in fillgaps true and fillgaps false
+
+pip_response_fill <- pip_response_fill[!(paste0(country_code, reporting_level, reporting_year) %in% pip_response_nofill[, paste0(country_code, reporting_level, reporting_year)])] #removes duplicates in fillgaps true and fillgaps false
 
 pip_response <- rbind(pip_response_fill[, fill := "true"], pip_response_nofill[, fill := "false"]) #joins both fillgaps true and fillgaps false and add columns for whether true or false
 
