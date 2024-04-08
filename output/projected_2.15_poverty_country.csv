@@ -9074,7 +9074,7 @@ IDN,2023,5262759.2,279934000,East Asia & Pacific,Indonesia,0.0188
 IMN,2023,276.532431461454,88000,Other High Income Countries,Isle of Man,0.00314241399388016
 IND,2023,151636811.2,1425158000,South Asia,India,0.1064
 IRL,2023,2998.2,4997000,Other High Income Countries,Ireland,6e-04
-IRN,2023,385240.5,85609000,Middle East & North Africa,"Iran, Islamic Rep.",0.0045
+IRN,2023,368118.7,85609000,Middle East & North Africa,"Iran, Islamic Rep.",0.0043
 IRQ,2023,49362.5,44875000,Middle East & North Africa,Iraq,0.0011
 ISL,2023,0,351000,Other High Income Countries,Iceland,0
 ISR,2023,21830.4,9096000,Other High Income Countries,Israel,0.0024
@@ -9093,7 +9093,7 @@ KWT,2023,14090.5843485586,4484000,Other High Income Countries,Kuwait,0.003142413
 LAO,2023,432786.9,7449000,East Asia & Pacific,Lao PDR,0.0581
 LBN,2023,0,5783000,Middle East & North Africa,Lebanon,0
 LBR,2023,1553169.6,5496000,Sub-Saharan Africa,Liberia,0.2826
-LBY,2023,418416.96288003,6895000,Middle East & North Africa,Libya,0.0606841135431516
+LBY,2023,418129.784987813,6895000,Middle East & North Africa,Libya,0.0606424633774928
 LCA,2023,36.6,183000,Latin America & Caribbean,St. Lucia,2e-04
 LIE,2023,125.696559755206,40000,Other High Income Countries,Liechtenstein,0.00314241399388016
 LKA,2023,316759.1,21259000,South Asia,Sri Lanka,0.0149
@@ -9290,7 +9290,7 @@ IDN,2024,4179179.6,282377000,East Asia & Pacific,Indonesia,0.0148
 IMN,2024,275.899327705395,88000,Other High Income Countries,Isle of Man,0.00313521963301585
 IND,2024,138972141,1438635000,South Asia,India,0.0966
 IRL,2024,3018.6,5031000,Other High Income Countries,Ireland,6e-04
-IRN,2024,379236,86190000,Middle East & North Africa,"Iran, Islamic Rep.",0.0044
+IRN,2024,353379,86190000,Middle East & North Africa,"Iran, Islamic Rep.",0.0041
 IRQ,2024,50633,46030000,Middle East & North Africa,Iraq,0.0011
 ISL,2024,0,353000,Other High Income Countries,Iceland,0
 ISR,2024,22135.2,9223000,Other High Income Countries,Israel,0.0024
@@ -9309,7 +9309,7 @@ KWT,2024,14249.573232057,4545000,Other High Income Countries,Kuwait,0.0031352196
 LAO,2024,391377.9,7541000,East Asia & Pacific,Lao PDR,0.0519
 LBN,2024,0,5691000,Middle East & North Africa,Lebanon,0
 LBR,2024,1520076.8,5632000,Sub-Saharan Africa,Liberia,0.2699
-LBY,2024,425470.940690072,6964000,Middle East & North Africa,Libya,0.0610957697716932
+LBY,2024,425039.512633423,6964000,Middle East & North Africa,Libya,0.0610338185860745
 LCA,2024,36.6,183000,Latin America & Caribbean,St. Lucia,2e-04
 LIE,2024,125.408785320634,40000,Other High Income Countries,Liechtenstein,0.00313521963301585
 LKA,2024,317474.3,21307000,South Asia,Sri Lanka,0.0149
@@ -9506,7 +9506,7 @@ IDN,2025,3274636.5,284751000,East Asia & Pacific,Indonesia,0.0115
 IMN,2025,276.144117886479,89000,Other High Income Countries,Isle of Man,0.00310274289760089
 IND,2025,127325403.3,1451829000,South Asia,India,0.0877
 IRL,2025,3038.4,5064000,Other High Income Countries,Ireland,6e-04
-IRN,2025,381612,86730000,Middle East & North Africa,"Iran, Islamic Rep.",0.0044
+IRN,2025,346920,86730000,Middle East & North Africa,"Iran, Islamic Rep.",0.004
 IRQ,2025,51920,47200000,Middle East & North Africa,Iraq,0.0011
 ISL,2025,0,355000,Other High Income Countries,Iceland,0
 ISR,2025,22437.6,9349000,Other High Income Countries,Israel,0.0024
@@ -9525,7 +9525,7 @@ KWT,2025,14281.9255576569,4603000,Other High Income Countries,Kuwait,0.003102742
 LAO,2025,338772,7630000,East Asia & Pacific,Lao PDR,0.0444
 LBN,2025,0,5606000,Middle East & North Africa,Lebanon,0
 LBR,2025,1417689,5770000,Sub-Saharan Africa,Liberia,0.2457
-LBY,2025,416320.471128636,7031000,Middle East & North Africa,Libya,0.0592121278806196
+LBY,2025,415744.537401776,7031000,Middle East & North Africa,Libya,0.0591302143936532
 LCA,2025,36.8,184000,Latin America & Caribbean,St. Lucia,2e-04
 LIE,2025,124.109715904036,40000,Other High Income Countries,Liechtenstein,0.00310274289760089
 LKA,2025,318115,21350000,South Asia,Sri Lanka,0.0149
@@ -9722,7 +9722,7 @@ IDN,2026,2612209.6,287056000,East Asia & Pacific,Indonesia,0.0091
 IMN,2026,275.682681272773,89000,Other High Income Countries,Isle of Man,0.00309755821654801
 IND,2026,115273936.2,1464726000,South Asia,India,0.0787
 IRL,2026,3057.6,5096000,Other High Income Countries,Ireland,6e-04
-IRN,2026,366349.2,87226000,Middle East & North Africa,"Iran, Islamic Rep.",0.0042
+IRN,2026,348904,87226000,Middle East & North Africa,"Iran, Islamic Rep.",0.004
 IRQ,2026,48386,48386000,Middle East & North Africa,Iraq,0.001
 ISL,2026,0,358000,Other High Income Countries,Iceland,0
 ISR,2026,22742.4,9476000,Other High Income Countries,Israel,0.0024
@@ -9741,7 +9741,7 @@ KWT,2026,14431.5237308972,4659000,Other High Income Countries,Kuwait,0.003097558
 LAO,2026,304861,7718000,East Asia & Pacific,Lao PDR,0.0395
 LBN,2026,0,5535000,Middle East & North Africa,Lebanon,0
 LBR,2026,1368396.5,5911000,Sub-Saharan Africa,Liberia,0.2315
-LBY,2026,406196.857574932,7098000,Middle East & North Africa,Libya,0.057226945276829
+LBY,2026,405908.547444521,7098000,Middle East & North Africa,Libya,0.0571863267743761
 LCA,2026,37,185000,Latin America & Caribbean,St. Lucia,2e-04
 LIE,2026,123.90232866192,40000,Other High Income Countries,Liechtenstein,0.00309755821654801
 LKA,2026,318651.4,21386000,South Asia,Sri Lanka,0.0149
@@ -9938,7 +9938,7 @@ IDN,2027,2025037,289291000,East Asia & Pacific,Indonesia,0.007
 IMN,2027,277.924535169145,90000,Other High Income Countries,Isle of Man,0.00308805039076828
 IND,2027,104002764.8,1477312000,South Asia,India,0.0704
 IRL,2027,3076.2,5127000,Other High Income Countries,Ireland,6e-04
-IRN,2027,359492.1,87681000,Middle East & North Africa,"Iran, Islamic Rep.",0.0041
+IRN,2027,324419.7,87681000,Middle East & North Africa,"Iran, Islamic Rep.",0.0037
 IRQ,2027,44629.2,49588000,Middle East & North Africa,Iraq,9e-04
 ISL,2027,0,360000,Other High Income Countries,Iceland,0
 ISR,2027,23044.8,9602000,Other High Income Countries,Israel,0.0024
@@ -9957,7 +9957,7 @@ KWT,2027,14557.0695420817,4714000,Other High Income Countries,Kuwait,0.003088050
 LAO,2027,279347.4,7803000,East Asia & Pacific,Lao PDR,0.0358
 LBN,2027,0,5478000,Middle East & North Africa,Lebanon,0
 LBR,2027,1295947.3,6053000,Sub-Saharan Africa,Liberia,0.2141
-LBY,2027,397447.588445829,7163000,Middle East & North Africa,Libya,0.0554861913228855
+LBY,2027,396870.468899579,7163000,Middle East & North Africa,Libya,0.0554056217924862
 LCA,2027,37.2,186000,Latin America & Caribbean,St. Lucia,2e-04
 LIE,2027,123.522015630731,40000,Other High Income Countries,Liechtenstein,0.00308805039076828
 LKA,2027,319098.4,21416000,South Asia,Sri Lanka,0.0149
@@ -10154,7 +10154,7 @@ IDN,2028,1573878.6,291459000,East Asia & Pacific,Indonesia,0.0054
 IMN,2028,277.371068215316,90000,Other High Income Countries,Isle of Man,0.00308190075794795
 IND,2028,90416595.5,1489565000,South Asia,India,0.0607
 IRL,2028,3095.4,5159000,Other High Income Countries,Ireland,6e-04
-IRN,2028,343593.9,88101000,Middle East & North Africa,"Iran, Islamic Rep.",0.0039
+IRN,2028,317163.6,88101000,Middle East & North Africa,"Iran, Islamic Rep.",0.0036
 IRQ,2028,45726.3,50807000,Middle East & North Africa,Iraq,9e-04
 ISL,2028,0,362000,Other High Income Countries,Iceland,0
 ISR,2028,23349.6,9729000,Other High Income Countries,Israel,0.0024
@@ -10173,7 +10173,7 @@ KWT,2028,14697.5847146538,4769000,Other High Income Countries,Kuwait,0.003081900
 LAO,2028,248440.5,7887000,East Asia & Pacific,Lao PDR,0.0315
 LBN,2028,0,5432000,Middle East & North Africa,Lebanon,0
 LBR,2028,1224302.5,6199000,Sub-Saharan Africa,Liberia,0.1975
-LBY,2028,389601.906381589,7225000,Middle East & North Africa,Libya,0.0539241392915695
+LBY,2028,389168.895908871,7225000,Middle East & North Africa,Libya,0.0538642070462106
 LCA,2028,37.2,186000,Latin America & Caribbean,St. Lucia,2e-04
 LIE,2028,123.276030317918,40000,Other High Income Countries,Liechtenstein,0.00308190075794795
 LKA,2028,319456,21440000,South Asia,Sri Lanka,0.0149
