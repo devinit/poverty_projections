@@ -26,10 +26,20 @@ ipls <- ipls[, .SD[reporting_level == "national" | !any(reporting_level == "nati
 ipls[, poverty_line := poverty_line * chosen_poverty_line]
 
 #Get current PIP data at the IPL
-pip_call <- paste0(pip, "country=all&fill_gaps=true&povline=", chosen_poverty_line)
+pip_call_fill <- paste0(pip, "country=all&fill_gaps=true&povline=", chosen_poverty_line)
 #---- broke up the get content and rbind---
-pip_content <- content(GET(pip_call))
-pip_current <- rbindlist(pip_content)
+pip_content_fill <- content(GET(pip_call_fill))
+pip_current_fill <- rbindlist(pip_content_fill)
+
+pip_call_nofill <- paste0(pip, "country=all&fill_gaps=false&povline=", chosen_poverty_line)
+#---- broke up the get content and rbind---
+pip_content_nofill <- content(GET(pip_call_nofill))
+pip_current_nofill <- rbindlist(pip_content_nofill)
+
+pip_current_fill <- pip_current_fill[!(paste0(country_code, reporting_level, reporting_year) %in% pip_current_nofill[, paste0(country_code, reporting_level, reporting_year)])] #removes duplicates in fillgaps true and fillgaps false
+
+pip_current <- rbind(pip_current_fill, pip_current_nofill)
+
 #-----------------------------------------
 pip_current <- pip_current[reporting_year >= first_year] #filters for data since 1981 only
 pip_current[, year := reporting_year] #adds year column
